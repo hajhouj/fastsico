@@ -56,7 +56,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			}
 		}
 
-		return 1.0 - (double) dp[m][n] / Math.max(m, n);
+		double s = (double) dp[m][n] / Math.max(m, n);
+		return 1.0 - s;
 	}
 	
 	/**
@@ -105,7 +106,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			
 			for (int i = 0; i < indexes.length; i++) {
 				double r = (double) results[indexes[i]];
-				double l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), SIZE);
+				int l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), SIZE);
+				double s = r / l;
 				double score = 1.0 -  r / l;
 				output.add(new Result(indexes[i], score));				
 			}

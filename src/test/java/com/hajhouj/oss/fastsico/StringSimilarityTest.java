@@ -27,7 +27,7 @@ public class StringSimilarityTest {
         String[] targets = new String[3];
         targets[0] = "hey";
         targets[1] = "hullo";
-        targets[2] = "wornd";
+        targets[2] = "world";
 
         EditDistance editDistance = new EditDistance();
         
@@ -40,12 +40,10 @@ public class StringSimilarityTest {
 
 	        assertEquals(0, results.get(1).getIndex());
 			assertEquals(results.get(1).getSimilarityScore(), editDistance.calculateSimilarity(query, targets[results.get(1).getIndex()]), 0);
-			assertEquals(0.6, results.get(1).getSimilarityScore(), 0.001);
+			assertEquals(0.4, results.get(1).getSimilarityScore(), 0.001);
 	        
-			
-	        assertEquals(0, results.get(2).getSimilarityScore(), 0.001);
-			assertEquals(results.get(2).getSimilarityScore(), editDistance.calculateSimilarity(query, targets[results.get(2).getIndex()]), 0);
 	        assertEquals(2, results.get(2).getIndex());
+			assertEquals(results.get(2).getSimilarityScore(), editDistance.calculateSimilarity(query, targets[results.get(2).getIndex()]), 0);
 		} catch (OpenCLDeviceNotFoundException e) {
 			fail(e.getMessage());
 		} catch (IOException e) {

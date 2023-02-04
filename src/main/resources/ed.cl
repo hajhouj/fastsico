@@ -3,31 +3,34 @@
 
 __kernel void compute(__global int  *targets, __global int  *query, __global int *results){
   const size_t globalId = get_global_id(0);
-  int xlen = targets[(globalId * (ITEM_SIZE + 1))];
+  int n = targets[(globalId * (ITEM_SIZE + 1))];
   int x[ITEM_SIZE];
-  for (int j = 0; j<xlen; j++){
-     x[j]  = targets[(((globalId * (ITEM_SIZE + 1)) + j) + 1)];
+  for (int i = 0; i<n; i++){
+     x[i]  = targets[(((globalId * (ITEM_SIZE + 1)) + i) + 1)];
   }
-  int ylen = query[0];
+  int m = query[0];
   int y[ITEM_SIZE];
-  for (int j = 0; j<ylen; j++){
-     y[j]  = query[(j + 1)];
+  for (int i = 0; i<m; i++){
+     y[i]  = query[(i + 1)];
   }
 
   int dp[DP_SIZE];
-  for (int i = 0; i<=xlen; i++){
-     for (int j = 0; j<=ylen; j++){
-        if (i==0){
-           dp[(i * xlen) + j]  = j;
+    for (int i = 0; i<=m; i++){
+      for (int j = 0; j<=n; j++){
+        if (j==0){
+           dp[i + (j * n)]  = i;
         } else {
-           if (j==0){
-              dp[(i * xlen) + j]  = i;
+           if (i==0){
+              dp[i + (j * n)]  = j;
            } else {
-              int substitutionCost = (x[(i - 1)]==y[(j - 1)])?0:1;
-              dp[(i * xlen) + j]  = min(min((dp[((((i - 1) * xlen) + j) - 1)] + substitutionCost), (dp[(((i - 1) * xlen) + j)] + 1)), (dp[(((i * xlen) + j) - 1)] + 1));
+               if (x[(j - 1)]==y[(i - 1)]) {
+                   dp[i + (j * n)] = dp[(i - 1) + ((j - 1) * n)];
+               } else {
+                   dp[i + (j * n)] = 1 + min(dp[(i - 1) + (j * n)], min(dp[ i + (j - 1) * n], dp[(i - 1) +  ((j - 1) * n)]));
+               }
            }
         }
      }
   }
- results[globalId]  = dp[((xlen * xlen) + ylen)];
+ results[globalId]  = dp[((n * n) + m)];
 }
