@@ -11,6 +11,7 @@ import com.aparapi.Range;
 import com.aparapi.device.Device.TYPE;
 import com.aparapi.device.OpenCLDevice;
 import com.aparapi.opencl.OpenCL;
+import com.hajhouj.oss.fastsico.IConstants;
 import com.hajhouj.oss.fastsico.Result;
 import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
 import com.hajhouj.oss.fastsico.factory.StringSimilarityAlgorithm;
@@ -73,6 +74,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 	 */
 	@Override
 	public List<Result> calculateSimilarity(String queryInput, String[] targetsInput) throws IOException, OpenCLDeviceNotFoundException {
+		final int ITEM_SIZE = Integer.parseInt(System.getProperty(IConstants.ED_ITEM_SIZE, "80"));
+
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("ed.cl");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		StringBuilder sb = new StringBuilder();
@@ -81,18 +84,18 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		  sb.append(line).append("\n");
 		}
 		String editDistanceCode = sb.toString();
-
-		int SIZE = 80;
-
-		final int[] targets = convertStringArrayToVector(targetsInput, SIZE);
-		final int[] query = convertStringToVector(queryInput, SIZE);
+		editDistanceCode = editDistanceCode.replace("#define ITEM_SIZE 80", "#define ITEM_SIZE " + ITEM_SIZE);
+		System.out.println(editDistanceCode);
+		
+		final int[] targets = convertStringArrayToVector(targetsInput, ITEM_SIZE);
+		final int[] query = convertStringToVector(queryInput, ITEM_SIZE);
 
 		final Range range = Range.create(targetsInput.length);
 
 		final int[] results = new int[targetsInput.length];
 
 		final OpenCLDevice device = OpenCLDevice.listDevices(TYPE.GPU).get(0);
-		System.err.println("Using OpenCL Device : " + device.getName() + " " + device.getShortDescription());
+		System.err.println("Using OpenCL Device : " + device.toString() + " " + device.getShortDescription());
 
 		if (device instanceof OpenCLDevice) {
 			final OpenCLDevice openclDevice = (OpenCLDevice) device;
@@ -106,7 +109,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			
 			for (int i = 0; i < indexes.length; i++) {
 				double r = (double) results[indexes[i]];
-				int l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), SIZE);
+				int l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), ITEM_SIZE);
 				double s = r / l;
 				double score = 1.0 -  r / l;
 				output.add(new Result(indexes[i], score));				

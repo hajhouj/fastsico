@@ -28,6 +28,8 @@ public class StringSimilarityTest {
         targets[0] = "hey";
         targets[1] = "hullo";
         targets[2] = "world";
+        
+        System.setProperty(IConstants.ED_ITEM_SIZE, "10");
 
         EditDistance editDistance = new EditDistance();
         
