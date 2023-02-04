@@ -86,9 +86,9 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		final int[] targets = convertStringArrayToVector(targetsInput, SIZE);
 		final int[] query = convertStringToVector(queryInput, SIZE);
 
-		final Range range = Range.create(targets.length);
+		final Range range = Range.create(targetsInput.length);
 
-		final int[] results = new int[targets.length];
+		final int[] results = new int[targetsInput.length];
 
 		final OpenCLDevice device = OpenCLDevice.listDevices(TYPE.GPU).get(0);
 		System.err.println("Using OpenCL Device : " + device.getName() + " " + device.getShortDescription());
@@ -104,8 +104,9 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			List<Result> output = new LinkedList<Result>();
 			
 			for (int i = 0; i < indexes.length; i++) {
-				String target = targetsInput[i];
-				double score = 1.0 - (double) results[indexes[i]] / Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), SIZE);
+				double r = (double) results[indexes[i]];
+				double l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), SIZE);
+				double score = 1.0 -  r / l;
 				output.add(new Result(indexes[i], score));				
 			}
 
