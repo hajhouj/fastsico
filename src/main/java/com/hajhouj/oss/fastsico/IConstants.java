@@ -5,5 +5,6 @@ public interface IConstants {
 	public final static String EDIT_DISTANCE= "EDIT_DISTANCE";
 	
 	//Internal system properties keys
-	public final static String ED_ITEM_SIZE = "ed.item.size";
+	public final static String ED_ITEM_SIZE = "fastsico.ed.item.size";
+	public final static String OPENCL_DEVICE = "fastsico.opencldevice";
 }
