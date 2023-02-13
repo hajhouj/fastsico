@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.aparapi.Range;
+import com.aparapi.device.Device;
 import com.aparapi.device.Device.TYPE;
 import com.aparapi.device.OpenCLDevice;
 import com.aparapi.opencl.OpenCL;
@@ -15,6 +16,7 @@ import com.hajhouj.oss.fastsico.IConstants;
 import com.hajhouj.oss.fastsico.Result;
 import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
 import com.hajhouj.oss.fastsico.factory.StringSimilarityAlgorithm;
+import com.hajhouj.oss.fastsico.helper.OpenCLDeviceSelector;
 import com.hajhouj.oss.fastsico.helper.SortArrayWithIndexes;
 
 /**
@@ -85,7 +87,6 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		}
 		String editDistanceCode = sb.toString();
 		editDistanceCode = editDistanceCode.replace("#define ITEM_SIZE 80", "#define ITEM_SIZE " + ITEM_SIZE);
-		System.out.println(editDistanceCode);
 		
 		final int[] targets = convertStringArrayToVector(targetsInput, ITEM_SIZE);
 		final int[] query = convertStringToVector(queryInput, ITEM_SIZE);
@@ -94,7 +95,14 @@ public class EditDistance implements StringSimilarityAlgorithm {
 
 		final int[] results = new int[targetsInput.length];
 
-		final OpenCLDevice device = OpenCLDevice.listDevices(TYPE.GPU).get(0);
+		String gpuQuery = System.getProperty(IConstants.OPENCL_DEVICE);
+		
+		Device device = null;
+		if (gpuQuery == null) {
+			device = OpenCLDevice.bestGPU();
+		} else {
+			device = OpenCLDeviceSelector.selectDevice(gpuQuery);
+		}
 		System.err.println("Using OpenCL Device : " + device.toString() + " " + device.getShortDescription());
 
 		if (device instanceof OpenCLDevice) {
