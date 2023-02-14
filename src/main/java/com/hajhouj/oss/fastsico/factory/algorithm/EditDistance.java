@@ -43,8 +43,10 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		int m = query.length();
 		int n = target.length();
 
+		// Initialize the 2D array to store the dynamic programming values
 		int[][] dp = new int[m + 1][n + 1];
 
+		// Fill in the dp array using the Edit Distance algorithm
 		for (int i = 0; i <= m; i++) {
 			for (int j = 0; j <= n; j++) {
 				if (i == 0) {
@@ -59,10 +61,11 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			}
 		}
 
+		// Calculate the similarity score
 		double s = (double) dp[m][n] / Math.max(m, n);
 		return 1.0 - s;
 	}
-	
+
 	/**
 	 * Calculates the similarity score between the query string and each target
 	 * string in the list of targets.
@@ -71,87 +74,121 @@ public class EditDistance implements StringSimilarityAlgorithm {
 	 * @param targetsInput the list of target strings
 	 * @return a list of {@link Result} objects, each containing a target index and
 	 *         its similarity score to the query string
-	 * @throws IOException if an I/O error occurs while reading the file ed.cl (OpenCL implementation of Edit Distance Algorithm)
+	 * @throws IOException                   if an I/O error occurs while reading
+	 *                                       the file ed.cl (OpenCL implementation
+	 *                                       of Edit Distance Algorithm)
 	 * @throws OpenCLDeviceNotFoundException if an OpenCL device is not found
 	 */
 	@Override
-	public List<Result> calculateSimilarity(String queryInput, String[] targetsInput) throws IOException, OpenCLDeviceNotFoundException {
+	public List<Result> calculateSimilarity(String queryInput, String[] targetsInput)
+			throws IOException, OpenCLDeviceNotFoundException {
 		final int ITEM_SIZE = Integer.parseInt(System.getProperty(IConstants.ED_ITEM_SIZE, "80"));
 
+		// Read the OpenCL code for Edit Distance Algorithm from ed.cl file
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("ed.cl");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		StringBuilder sb = new StringBuilder();
 		String line;
 		while ((line = reader.readLine()) != null) {
-		  sb.append(line).append("\n");
+			sb.append(line).append("\n");
 		}
 		String editDistanceCode = sb.toString();
+
+		// Replace the value of ITEM_SIZE in the OpenCL code with the value from system
+		// properties or 80 as default
 		editDistanceCode = editDistanceCode.replace("#define ITEM_SIZE 80", "#define ITEM_SIZE " + ITEM_SIZE);
-		
+
+		// Convert the query and target strings into integer arrays
 		final int[] targets = convertStringArrayToVector(targetsInput, ITEM_SIZE);
 		final int[] query = convertStringToVector(queryInput, ITEM_SIZE);
 
+		// Initialize the range for parallel processing
 		final Range range = Range.create(targetsInput.length);
 
+		// Initialize the results array to store the similarity scores
 		final int[] results = new int[targetsInput.length];
 
+		// Get the GPU device to use for OpenCL
 		String gpuQuery = System.getProperty(IConstants.OPENCL_DEVICE);
-		
+
 		Device device = null;
 		if (gpuQuery == null) {
 			device = OpenCLDevice.bestGPU();
 		} else {
 			device = OpenCLDeviceSelector.selectDevice(gpuQuery);
 		}
-		System.err.println("Using OpenCL Device : " + device.toString() + " " + device.getShortDescription());
+		if (device == null)
+			throw new OpenCLDeviceNotFoundException("No OpenCL device found the given query : " + gpuQuery);
 
 		if (device instanceof OpenCLDevice) {
 			final OpenCLDevice openclDevice = (OpenCLDevice) device;
-
+			// Initialize the OpenCL instance with the Edit Distance Algorithm code
 			final EditDistanceCL editDist = openclDevice.bind(EditDistanceCL.class, editDistanceCode);
+
+			// Execute the Edit Distance Algorithm in parallel on the GPU
 			editDist.compute(range, targets, query, results);
 
+			// Sort the results array in ascending order
 			int[] indexes = SortArrayWithIndexes.sortWithIndexes(results);
-			
+
 			List<Result> output = new LinkedList<Result>();
-			
+
+			// Return the list of Result objects with target index and its similarity score
+			// to the query string.
 			for (int i = 0; i < indexes.length; i++) {
 				double r = (double) results[indexes[i]];
 				int l = Math.min(Math.max(queryInput.length(), targetsInput[indexes[i]].length()), ITEM_SIZE);
-				double score = 1.0 -  r / l;
-				output.add(new Result(indexes[i], score));				
+				double score = 1.0 - r / l;
+				output.add(new Result(indexes[i], score));
 			}
-
 			return output;
 		} else {
-			throw new OpenCLDeviceNotFoundException("No OpenCL device was found on your system. Please make sure that you have the necessary hardware and software components installed and try again.");
+			throw new OpenCLDeviceNotFoundException(
+					"No OpenCL device was found on your system. Please make sure that you have the necessary hardware and software components installed and try again.");
 		}
 	}
 
 	interface EditDistanceCL extends OpenCL<EditDistanceCL> {
-        public EditDistanceCL compute(
-                              Range _range,
-                              @GlobalReadWrite("targets") int[] targets,//
-                              @GlobalReadWrite("query") int[] query,
-                              @GlobalReadWrite("results") int[] results);
-    }
+		public EditDistanceCL compute(Range _range, @GlobalReadWrite("targets") int[] targets, //
+				@GlobalReadWrite("query") int[] query, @GlobalReadWrite("results") int[] results);
+	}
 
-    public static int[] convertStringArrayToVector(String[] arr, int size) {
-        int[] result = new int[arr.length * (size + 1)];
-        for (int i = 0; i < arr.length; i++) {
-          int[] res = convertStringToVector(arr[i], size);
-          for (int j = 0; j < res.length; j++) {
-            result[i * (size + 1) + j] = res[j];
-          }
-        }
-        return result;
-    }
-    public static int[] convertStringToVector(String str, int size) {
-        int[] result = new int[size + 1];
-        result[0] = (int)Math.min(str.length(), size);
-        for (int i=1; i <= result[0]; i++) {
-            result[i] = str.charAt(i-1);
-        }
-        return result;
-    }
+	/**
+	 * 
+	 * Converts the input string array into a vector representation with a specified
+	 * item size.
+	 * 
+	 * @param targetsInput the input string array
+	 * @param size         the specified item size
+	 * @return a vector representation of the input string array
+	 */
+
+	public static int[] convertStringArrayToVector(String[] arr, int size) {
+		int[] result = new int[arr.length * (size + 1)];
+		for (int i = 0; i < arr.length; i++) {
+			int[] res = convertStringToVector(arr[i], size);
+			for (int j = 0; j < res.length; j++) {
+				result[i * (size + 1) + j] = res[j];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * Converts the input string into a vector representation with a specified item
+	 * size.
+	 * 
+	 * @param queryInput the input string
+	 * @param size       the specified item size
+	 * @return a vector representation of the input string
+	 */
+	public static int[] convertStringToVector(String str, int size) {
+		int[] result = new int[size + 1];
+		result[0] = (int) Math.min(str.length(), size);
+		for (int i = 1; i <= result[0]; i++) {
+			result[i] = str.charAt(i - 1);
+		}
+		return result;
+	}
 }
