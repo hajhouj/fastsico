@@ -1,3 +1,10 @@
 # Table of contents
 
-* [Page 1](README.md)
+* [Introduction](README.md)
+* [Requirements](requirements.md)
+* [Installation](installation.md)
+* [Usage](usage.md)
+* [Troubleshooting](troubleshooting.md)
+* [References](references.md)
+* [Version History](version-history.md)
+* [Contributing](contributing.md)
