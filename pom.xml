@@ -2,8 +2,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hajhouj.oss.fastsico</groupId>
 	<artifactId>fastsico</artifactId>
-	<version>0.0.1</version>
-	<name>FaStSiCo</name>
+	<version>1.0.0</version>
+	<name>FASTSICO</name>
 	<description>Fast String Similarity Computing Library</description>
 	<build>
 		<plugins>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
-			<version>2.0.0</version>
+			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 

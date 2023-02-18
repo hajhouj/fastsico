@@ -9,7 +9,7 @@ import com.hajhouj.oss.fastsico.Result;
 import com.hajhouj.oss.fastsico.StringSimilarity;
 
 /**
- * The StringFinder class is a program to find and display the top 10 most
+ * The Find class is a program to find and display the top 10 most
  * similar strings to a given query string, from a list of target strings read
  * from a data file. The similarity is calculated using the edit distance
  * algorithm from the Fastsico library.
@@ -18,7 +18,7 @@ import com.hajhouj.oss.fastsico.StringSimilarity;
  * @version 1.0
  * @since 2023-02-13
  */
-public class StringFinder {
+public class Find {
 
 	/**
 	 * Main method to run the program.

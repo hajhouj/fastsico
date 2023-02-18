@@ -8,5 +8,5 @@ public interface IConstants {
 	//Maximum item size for Edit Distance Algorithm
 	public final static String ED_ITEM_SIZE = "fastsico.ed.item.size";
 	//System property key that defines the device to use in computation
-	public final static String OPENCL_DEVICE = "fastsico.opencldevice";
+	public final static String OPENCL_DEVICE = "use-device";
 }
