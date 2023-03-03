@@ -26,7 +26,7 @@ public interface StringSimilarityAlgorithm {
      * @throws OpenCLDeviceNotFoundException 
      * @throws IOException 
      */
-	public List<Result> calculateSimilarity(String query, String[] targets) throws OpenCLDeviceNotFoundException, IOException;
+	public List<Result> calculateSimilarityInDataSet(String query, String dataset) throws OpenCLDeviceNotFoundException, IOException;
 	
 	/*
 	 * Calculates the similarity score between a query string and a target string.

@@ -27,8 +27,8 @@ public class StringSimilarity {
      * @throws IOException Thrown by {@link StringSimilarityAlgorithm}.calculateSimilarity() 
      * @throws OpenCLDeviceNotFoundException Thrown by {@link StringSimilarityAlgorithm}.calculateSimilarity() 
      */
-    public List<Result> calculateSimilarity(String query, String[] targets, String algorithm) throws OpenCLDeviceNotFoundException, IOException {
+    public List<Result> calculateSimilarity(String query, String dataset, String algorithm) throws OpenCLDeviceNotFoundException, IOException {
         StringSimilarityAlgorithm stringSimilarityAlgorithm = AlgorithmFactory.getAlgorithm(algorithm);
-        return stringSimilarityAlgorithm.calculateSimilarity(query, targets);
+        return stringSimilarityAlgorithm.calculateSimilarityInDataSet(query, dataset);
     }
 }

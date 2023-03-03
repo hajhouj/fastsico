@@ -34,14 +34,14 @@ public class Find {
 		// Read the query string from the command-line arguments
 		String query = args[1];
 
-		// Read the target strings from the data file
-		String[] targets = Files.readAllLines(Paths.get(dataFile)).toArray(new String[0]);
-
 		// Create an instance of the StringSimilarity class
 		StringSimilarity ss = new StringSimilarity();
 
 		// Calculate the similarity scores of the target strings to the query string
-		List<Result> results = ss.calculateSimilarity(query, targets, IConstants.EDIT_DISTANCE);
+		List<Result> results = ss.calculateSimilarity(query, dataFile, IConstants.EDIT_DISTANCE);
+
+		// Read the target strings from the data file
+		String[] targets = Files.readAllLines(Paths.get(dataFile)).toArray(new String[0]);
 
 		// Print the top 10 similarity scores
 		for (int i = 0; i < 10; i++)
