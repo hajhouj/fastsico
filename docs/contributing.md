@@ -1,0 +1,11 @@
+# Contributing
+
+FASTSICO  is a library for efficient string similarity computations. If you wish to add a new string similarity algorithm to FASTSICO, here are some guidelines to help you get started:
+
+1. Create a new class that implements the `StringSimilarityAlgorithm` interface: The first step is to create a new class that implements the `StringSimilarityAlgorithm` interface. This interface has two methods: `calculateSimilarity(String query, String target)` and `calculateSimilarity(String query, String[] targets)`. Implement the `calculateSimilarity` method to compute the similarity between the query string and a single target string. Implement the `calculateSimilarity` method that takes an array of target strings, to compute the similarity between the query string and multiple target strings.
+2. Add a new constant to the `IConstants` interface: In the `IConstants` interface, add a new constant that represents the new string similarity algorithm. Choose a unique name for the constant that describes the new algorithm.
+3. Update the `AlgorithmFactory` class: In the `AlgorithmFactory` class, update the `getAlgorithm` method to create an instance of your new string similarity algorithm implementation when the `algorithm` parameter matches the name of the new constant you added to the `IConstants` interface.
+4. Implement the new algorithm: Implement the new string similarity algorithm in the class you created in step 1. You can use the existing algorithms as a reference for how to implement the new algorithm. Make sure that the algorithm is efficient and can handle large datasets.
+5. Write unit tests: Write unit tests for the new algorithm to ensure that it returns correct results. You can use the existing unit tests as a reference for how to write unit tests.
+6. Add documentation: Add documentation to the new algorithm implementation that explains how the algorithm works and how to use it. Also, update the documentation for the `StringSimilarity` class to describe the new algorithm.
+7. Submit a pull request: Once you have completed the above steps, submit a pull request to the FastSico project with your new implementation. Make sure that your code follows the project's coding style and standards. Your pull request should include the new implementation, unit tests, and documentation.
