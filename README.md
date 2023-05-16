@@ -126,7 +126,7 @@ DEVICE QUERY | DEVICE NAME
 
 A list of common issues and their solutions.
 
-# <a id=vh"></a>Version History
+# <a id="vh"></a>Version History
 
 A list of changes made to the library in each version.
 
