@@ -130,6 +130,10 @@ A list of common issues and their solutions.
 
 A list of changes made to the library in each version.
 
+## 1.0.0
+* First version
+* Support of Edit Distance Algorithm
+
 # <a id="c"></a>Contributing
 
 FASTSICO  is a library for efficient string similarity computations. If you wish to add a new string similarity algorithm to FASTSICO, here are some guidelines to help you get started:
