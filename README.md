@@ -124,8 +124,16 @@ DEVICE QUERY | DEVICE NAME
 
 # <a id="t"></a>Troubleshooting
 
-A list of common issues and their solutions.
+## Device not available
 
+* __Symptom__: You receive an error stating that the OpenCL device is not available.
+* __Solution__: This means the specific OpenCL device you're trying to use is not available. It could be used by another process, or it might not support the OpenCL features you're trying to use. Try using a different device.
+
+## CL_OUT_OF_HOST_MEMORY error
+
+* __Symptom__: You encounter an error stating "CL_OUT_OF_HOST_MEMORY".
+* __Solution__: This error occurs when the host's memory available for OpenCL is insufficient. You may need to free up some system resources. Try closing unnecessary applications, or consider upgrading your system's memory.
+    
 # <a id="vh"></a>Version History
 
 A list of changes made to the library in each version.
