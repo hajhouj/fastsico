@@ -1,11 +1,11 @@
-package com.hajhouj.oss.fastsico;
+package com.hajhouj.fastsico;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
-import com.hajhouj.oss.fastsico.factory.AlgorithmFactory;
-import com.hajhouj.oss.fastsico.factory.StringSimilarityAlgorithm;
+import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
+import com.hajhouj.fastsico.factory.AlgorithmFactory;
+import com.hajhouj.fastsico.factory.StringSimilarityAlgorithm;
 
 /**
  * The StringSimilarity class provides a way to calculate the string similarity

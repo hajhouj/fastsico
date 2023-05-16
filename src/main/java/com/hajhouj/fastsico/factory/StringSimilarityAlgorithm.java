@@ -1,10 +1,10 @@
-package com.hajhouj.oss.fastsico.factory;
+package com.hajhouj.fastsico.factory;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.hajhouj.oss.fastsico.Result;
-import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
+import com.hajhouj.fastsico.Result;
+import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
 
 /**
  * 

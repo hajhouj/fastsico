@@ -1,12 +1,12 @@
-package com.hajhouj.oss.fastsico.tools;
+package com.hajhouj.fastsico.tools;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.hajhouj.oss.fastsico.IConstants;
-import com.hajhouj.oss.fastsico.Result;
-import com.hajhouj.oss.fastsico.StringSimilarity;
+import com.hajhouj.fastsico.IConstants;
+import com.hajhouj.fastsico.Result;
+import com.hajhouj.fastsico.StringSimilarity;
 
 /**
  * The Find class is a program to find and display the top 10 most

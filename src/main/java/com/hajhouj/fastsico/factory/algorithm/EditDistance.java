@@ -1,4 +1,4 @@
-package com.hajhouj.oss.fastsico.factory.algorithm;
+package com.hajhouj.fastsico.factory.algorithm;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,11 +23,11 @@ import org.jocl.cl_kernel;
 import org.jocl.cl_mem;
 import org.jocl.cl_program;
 
-import com.hajhouj.oss.fastsico.IConstants;
-import com.hajhouj.oss.fastsico.Result;
-import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
-import com.hajhouj.oss.fastsico.factory.StringSimilarityAlgorithm;
-import com.hajhouj.oss.fastsico.helper.OpenCLDeviceSelector;
+import com.hajhouj.fastsico.IConstants;
+import com.hajhouj.fastsico.Result;
+import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
+import com.hajhouj.fastsico.factory.StringSimilarityAlgorithm;
+import com.hajhouj.fastsico.helper.OpenCLDeviceSelector;
 
 /**
  * 

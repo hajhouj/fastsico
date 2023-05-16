@@ -1,4 +1,4 @@
-package com.hajhouj.oss.fastsico;
+package com.hajhouj.fastsico;
 
 public interface IConstants {
 	//Algortihms tags

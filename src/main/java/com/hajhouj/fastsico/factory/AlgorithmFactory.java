@@ -1,6 +1,6 @@
-package com.hajhouj.oss.fastsico.factory;
+package com.hajhouj.fastsico.factory;
 
-import com.hajhouj.oss.fastsico.factory.algorithm.EditDistance;
+import com.hajhouj.fastsico.factory.algorithm.EditDistance;
 
 /**
  * 

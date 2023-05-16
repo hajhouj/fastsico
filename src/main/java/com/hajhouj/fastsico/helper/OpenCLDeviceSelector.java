@@ -1,11 +1,11 @@
-package com.hajhouj.oss.fastsico.helper;
+package com.hajhouj.fastsico.helper;
 
 import org.jocl.CL;
 import org.jocl.Pointer;
 import org.jocl.cl_device_id;
 import org.jocl.cl_platform_id;
 
-import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
+import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
 
 /**
  * Class OpenCLDeviceSelector helps in selecting a device based on device query.

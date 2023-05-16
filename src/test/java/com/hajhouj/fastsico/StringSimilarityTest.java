@@ -1,5 +1,5 @@
 // StringSimilarityLibraryTest class
-package com.hajhouj.oss.fastsico;
+package com.hajhouj.fastsico;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,8 +13,11 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.hajhouj.oss.fastsico.exception.OpenCLDeviceNotFoundException;
-import com.hajhouj.oss.fastsico.factory.algorithm.EditDistance;
+import com.hajhouj.fastsico.IConstants;
+import com.hajhouj.fastsico.Result;
+import com.hajhouj.fastsico.StringSimilarity;
+import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
+import com.hajhouj.fastsico.factory.algorithm.EditDistance;
 
 /**
  * Test class for {@link StringSimilarity} to validate its implementation of the string similarity calculation.

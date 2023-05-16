@@ -1,4 +1,4 @@
-package com.hajhouj.oss.fastsico.helper;
+package com.hajhouj.fastsico.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;

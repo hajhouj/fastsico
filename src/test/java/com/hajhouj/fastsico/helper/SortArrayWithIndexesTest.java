@@ -1,4 +1,4 @@
-package com.hajhouj.oss.fastsico.helper;
+package com.hajhouj.fastsico.helper;
 import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;

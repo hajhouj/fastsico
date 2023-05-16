@@ -1,4 +1,4 @@
-package com.hajhouj.oss.fastsico.exception;
+package com.hajhouj.fastsico.exception;
 /**
  * Exception class to represent an error when an OpenCL device is not found.
  * @author Mohammed Hajhouj
