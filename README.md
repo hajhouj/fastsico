@@ -11,6 +11,7 @@ The primary objective of FASTSICO is enhancing the speed of string similarity co
 * [Usage](#u)
 * [Troubleshooting](#t)
 * [Version History](#vh)
+* [Project Background and Acknowledgements](#ack)
 * [Contributing](#c)
 
 # <a id="r"></a>Requirements
@@ -141,6 +142,14 @@ A list of changes made to the library in each version.
 ## 1.0.0
 * First version
 * Support of Edit Distance Algorithm
+
+# <a id="ack"></a>Project Background and Acknowledgements
+
+This library was developed as part of a doctoral thesis supervised by [Professor Mounia Abik](http://ensias.um5.ac.ma/professor/mme-mounia-abik) from the École Nationale Supérieure d’Informatique et d’Analyse des Systèmes ([ENSIAS](http://ensias.um5.ac.ma/)) of the Mohamed V University of Rabat. 
+
+The development and testing of this library would not have been possible without the support of the Centre National pour la Recherche Scientifique et Technique ([CNRST](https://www.cnrst.ma/fr/)) and the team responsible for the Data Center HPC MARWAN, who generously provided the necessary access to computing machines for testing the library.
+
+We extend our deepest gratitude to these individuals and institutions for their support and contributions to this project. The Mohamed V University of Rabat and ENSIAS continue to be pivotal in the development of cutting-edge research in the field of information technology and systems analysis. For more information about the university, you can visit their official website [here](http://www.um5.ac.ma/).
 
 # <a id="c"></a>Contributing
 
