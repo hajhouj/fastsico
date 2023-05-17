@@ -139,6 +139,10 @@ DEVICE QUERY | DEVICE NAME
 
 A list of changes made to the library in each version.
 
+## 1.0.1
+* Correct bug in device selection
+* Add output formatting (xml, csv, json)
+
 ## 1.0.0
 * First version
 * Support of Edit Distance Algorithm
