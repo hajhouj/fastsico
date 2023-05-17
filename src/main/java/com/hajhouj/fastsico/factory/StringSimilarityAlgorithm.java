@@ -21,14 +21,15 @@ public interface StringSimilarityAlgorithm {
      * Calculates the similarity score between the query string and each target string in the list of targets.
      *
      * @param query the query string
-     * @param targets the list of target strings
+     * @param dataset the dataset path
      * @return a list of {@link Result} objects, each containing a target string and its similarity score to the query string
-     * @throws OpenCLDeviceNotFoundException 
-     * @throws IOException 
+	 * @throws IOException                   if an I/O error occurs while reading
+	 *                                       the dataset file
+	 * @throws OpenCLDeviceNotFoundException if an OpenCL device is not found
      */
 	public List<Result> calculateSimilarityInDataSet(String query, String dataset) throws OpenCLDeviceNotFoundException, IOException;
 	
-	/*
+	/**
 	 * Calculates the similarity score between a query string and a target string.
 	 * 
 	 * @param query The query string.

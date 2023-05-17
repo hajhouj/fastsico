@@ -55,7 +55,7 @@ public class Result {
 	 * 
 	 * Sets the target index.
 	 * 
-	 * @param target the target index
+	 * @param index the target index
 	 */
 	public void setTarget(int index) {
 		this.index = index;

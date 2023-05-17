@@ -21,7 +21,7 @@ public class StringSimilarity {
      * Calculates the similarity score between the query string and each target string in the list of targets using the specified algorithm.
      *
      * @param query the query string
-     * @param targets the list of target strings
+     * @param dataset dataset path
      * @param algorithm the name of the algorithm to use for string similarity calculation
      * @return a list of {@link Result} objects, each containing a target string and its similarity score to the query string
      * @throws IOException Thrown by {@link StringSimilarityAlgorithm}.calculateSimilarity() 

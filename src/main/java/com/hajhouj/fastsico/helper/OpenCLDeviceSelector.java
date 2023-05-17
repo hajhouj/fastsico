@@ -11,8 +11,8 @@ import com.hajhouj.fastsico.exception.OpenCLDeviceNotFoundException;
  * Class OpenCLDeviceSelector helps in selecting a device based on device query.
  * 
  * @author Mohammed Hajhouj
- * @version 1.0
- * @since 2023-02-13
+ * @version 1.0.1
+ * @since 2023-05-17
  */
 public class OpenCLDeviceSelector {
 
@@ -20,8 +20,8 @@ public class OpenCLDeviceSelector {
 	 * Method selectDevice takes device query as input and returns the matching
 	 * OpenCLDevice.
 	 * 
-	 * @param deviceQuery string to match the OpenCLDevice.
-	 * @return OpenCLDevice matching the query.
+	 * @param queryString string to match the OpenCLDevice.
+	 * @return cl_device_id matching the query.
 	 * @throws OpenCLDeviceNotFoundException if no device matches the query or query
 	 *                                       is in wrong format.
 	 */
@@ -41,7 +41,7 @@ public class OpenCLDeviceSelector {
 
 		// Print the devices for each platform
 		for (int i = 0; i < numPlatforms; i++) {
-			System.out.printf("Devices for platform %d:\n", i);
+			System.err.printf("Devices for platform %d:\n", i);
 			int numDevicesArray[] = new int[1];
 			CL.clGetDeviceIDs(platforms[i], CL.CL_DEVICE_TYPE_ALL, 0, null, numDevicesArray);
 			int numDevices = numDevicesArray[0];
@@ -51,7 +51,7 @@ public class OpenCLDeviceSelector {
 				String deviceName = getString(devices[j], CL.CL_DEVICE_NAME);
 
 				if (i == platformId && j == deviceId) {
-					System.out.println("Using " + deviceName);
+					System.err.println("Using " + deviceName);
 					return devices[j];
 				}
 			}

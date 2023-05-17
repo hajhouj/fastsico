@@ -35,8 +35,8 @@ import com.hajhouj.fastsico.helper.OpenCLDeviceSelector;
  * distance algorithm.
  * 
  * @author Mohammed Hajhouj
- * @version 1.0
- * @since 2023-02-02
+ * @version 1.0.1
+ * @since 2023-05-17
  */
 public class EditDistance implements StringSimilarityAlgorithm {
 	/*
@@ -79,8 +79,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 	 * Calculates the similarity score between the query string and each target
 	 * string in the list of targets.
 	 *
-	 * @param queryInput   the query string
-	 * @param targetsInput the list of target strings
+	 * @param queryInput	the query string
+	 * @param dataset 		the data path
 	 * @return a list of {@link Result} objects, each containing a target index and
 	 *         its similarity score to the query string
 	 * @throws IOException                   if an I/O error occurs while reading
@@ -97,7 +97,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 
 		// Get Max Memory Allocation of the GPU device
 		long[] maxMemAllocSizeInfo = new long[1];
-        cl_device_id selectedDevice = OpenCLDeviceSelector.selectDevice("0.2");
+        cl_device_id selectedDevice = OpenCLDeviceSelector.selectDevice(gpuDeviceQuery);
+        
 		CL.clGetDeviceInfo(selectedDevice, CL.CL_DEVICE_MAX_MEM_ALLOC_SIZE, Sizeof.cl_long,
 				Pointer.to(maxMemAllocSizeInfo), null);
 		long MMA = maxMemAllocSizeInfo[0];
@@ -147,7 +148,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			});
 			
 			//run the kernel
-			result.put(runKernel(gpuDeviceQuery, in, query, countLines.longValue(), VECTOR_SIZE));
+			result.put(runKernel(selectedDevice, in, query, countLines.longValue(), VECTOR_SIZE));
 		} else {
 			//if memory size of input excess MMA or XMX, split input data to chunks
 			int BUFFER_MEMORY_SIZE = (int)Collections.min(memoryLimits).longValue();
@@ -158,7 +159,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			reader.lines().forEach(line -> {
 				if (chunk.position() + VECTOR_SIZE > BUFFER_CAPACITY) {
 					try {
-						result.put(runKernel(gpuDeviceQuery,chunk, query, count.intValue(), VECTOR_SIZE));
+						result.put(runKernel(selectedDevice,chunk, query, count.intValue(), VECTOR_SIZE));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -174,7 +175,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 				}
 				count.incrementAndGet();
             });
-			result.put(runKernel(gpuDeviceQuery, chunk, query, count.longValue(), VECTOR_SIZE));			
+			result.put(runKernel(selectedDevice, chunk, query, count.longValue(), VECTOR_SIZE));			
 		}
 		
 		reader.close();
@@ -207,12 +208,10 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		return result;
 	}
 
-	public static IntBuffer runKernel(String device, Buffer input, Buffer query, long n, int VECTOR_SIZE) throws OpenCLDeviceNotFoundException, IOException {
+	public static IntBuffer runKernel(cl_device_id selectedDevice, Buffer input, Buffer query, long n, int VECTOR_SIZE) throws OpenCLDeviceNotFoundException, IOException {
         // Initialize the OpenCL context and command queue
         CL.setExceptionsEnabled(true);
 
-        
-        cl_device_id selectedDevice = OpenCLDeviceSelector.selectDevice(device);
 		cl_context context = CL.clCreateContext(null, 1, new cl_device_id[] {selectedDevice }, null, null, null);
         cl_command_queue queue = CL.clCreateCommandQueue(context, selectedDevice, 0, null);
 
