@@ -13,8 +13,8 @@ import com.hajhouj.fastsico.factory.StringSimilarityAlgorithm;
  * algorithm.
  * 
  * @author Mohammed Hajhouj
- * @version 1.0
- * @since 2023-02-02
+ * @version 1.0.1
+ * @since 2023-05-17
  */
 public class StringSimilarity {
     /**
