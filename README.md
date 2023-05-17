@@ -55,28 +55,28 @@ FASTSICO is a Java library for calculating the similarity score between a query 
 
 ## Using FASTSICO as a Library
 
-The primary way to use FASTSICO is as a Java library. You can call the method `calculateSimilarity(query, targets, algorithm)` to calculate the similarity score between the query string and each target string in the list of targets using the specified algorithm. The method signature is as follows:
+The primary way to use FASTSICO is as a Java library. You can call the method `calculateSimilarity(query, targets, algorithm)` to calculate the similarity score between the query string and each target string in the strings dataset using the specified algorithm. The method signature is as follows:
 
 ```java
-public List<Result> calculateSimilarity(String query, List<String> targets, String algorithm);
+public List<Result> calculateSimilarity(String query, String dataset, String algorithm);
 ```
 
 * `query` is the query string.
-* `targets` is the list of target strings.
+* `dataset` a large dataset of strings.
 * `algorithm` is the name of the algorithm to use for string similarity calculation. For version 1.0.0, only Edit distance algorithm is present in the library, and you can pass `IConstants.EDIT_DISTANCE` to use this algorithm.
 
 The method returns a list of `Result` objects, each containing a target string and its similarity score to the query string. The list is ordered in ascending order by similarity score.
 
-By default, FASTSICO tries to find the best OpenCL device available on your host to perform the computation, leveraging the parallelism capability of OpenCL to speed up the computation. However, if you want to use a specific device, you can pass a Java system property called `use-device` with the query string indicating which type of device you want to use and which one exactly by giving its index. For example, if you want to use the second OpenCL device present on your machine, which is of type GPU and index 1, you can set the `use-device` property to `GPU.1`.
+By default, FASTSICO tries to find the best OpenCL device available on your host to perform the computation, leveraging the parallelism capability of OpenCL to speed up the computation. However, if you want to use a specific device, you can pass a Java system property called `use-device` with the query string indicating which type of device you want to use and which one exactly by giving its index. For example, if you want to use the second OpenCL device present on your machine, which is the second OpenCL device in platform 0, you can set the `use-device` property to `0.1`.
 
 Here is an example of how to use the `calculateSimilarity` method with a specific OpenCL device:
 
 ```java
-System.setProperty("use-device", "GPU.1"); // Set the device to use
+System.setProperty("use-device", "0.1"); // Set the device to use
 String query = "apple";
-List<String> targets = Arrays.asList("banana", "orange", "pear");
 String algorithm = IConstants.EDIT_DISTANCE;
-List<Result> results = calculateSimilarity(query, targets, algorithm);
+String dataset = "fruits.txt";
+List<Result> results = calculateSimilarity(query, dataset, algorithm);
 ```
 
 ## Using FASTSICO as a Command-Line Utility
@@ -84,7 +84,7 @@ List<Result> results = calculateSimilarity(query, targets, algorithm);
 FASTSICO can also be used as a command-line utility to find the most similar strings to a query string from a file containing a list of strings. The command has the following syntax:
 
 ```sh
-java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 * `<data-file>` is the path to the file containing the list of target strings.
@@ -95,10 +95,10 @@ java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.Find <data-file
 By default, the command will use the default OpenCL device available with the best configuration. However, if you need to specify a specific device, you can use the `use-device` system property, as shown in the example below:
 
 ```sh
-java -Duse-device=GPU.0 -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Duse-device=0.0 -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
-Here, `GPU.0` means to use the first OpenCL device of type GPU.
+Here, `0.0` means to use the first OpenCL device in platform 0.
 
 ## DevicesList Utility Command
 
