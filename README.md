@@ -41,7 +41,7 @@ Steps for installing the FASTSICO library as a Maven dependency in your project:
 <dependency>
     <groupId>com.hajhouj.fastsico</groupId>
     <artifactId>fastsico</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -84,7 +84,7 @@ List<Result> results = calculateSimilarity(query, dataset, algorithm);
 FASTSICO can also be used as a command-line utility to find the most similar strings to a query string from a file containing a list of strings. The command has the following syntax:
 
 ```sh
-java -cp lib/*:fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -cp "lib/*":fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 * `<data-file>` is the path to the file containing the list of target strings.
@@ -95,7 +95,7 @@ java -cp lib/*:fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <q
 By default, the command will use the default OpenCL device available with the best configuration. However, if you need to specify a specific device, you can use the `use-device` system property, as shown in the example below:
 
 ```sh
-java -Duse-device=0.0 -cp lib/*:fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Duse-device=0.0 -cp "lib/*":fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 Here, `0.0` means to use the first OpenCL device in platform 0.
