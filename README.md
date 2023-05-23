@@ -128,9 +128,9 @@ DEVICE QUERY | DEVICE NAME
 To benchmark the FASTSICO Library on your OpenCL devices, follow these steps:
 
 1. Download the latest release of [FASTSICO](https://github.com/hajhouj/fastsico/releases/latest).
-2. Before running the benchmark script, you need to download the lyrics data from the following [link](https://www.kaggle.com/datasets/neisse/scrapped-lyrics-from-6-genres?resource=download&select=lyrics-data.csv). The lyrics data contains 15 million lines corresponding to lyrics from a vast number of songs across various genres.
-3. After downloading the lyrics data, place it in the same location as the benchmark script.
-4. Unzip the downloaded release archive.
+2. Unzip the downloaded release archive.
+3. Before running the benchmark script, you need to download the lyrics data from the following [link](https://www.kaggle.com/datasets/neisse/scrapped-lyrics-from-6-genres?resource=download&select=lyrics-data.csv). The lyrics data contains 15 million lines corresponding to lyrics from a vast number of songs across various genres.
+4. After downloading the lyrics data "lyrics-data.csv", place it in the same location as the benchmark script.
 5. Run the benchmark script based on your operating system:
        * For Linux, execute the benchmark.sh script.
        * For Windows, execute the benchmark.cmd script.
