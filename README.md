@@ -9,6 +9,7 @@ The primary objective of FASTSICO is enhancing the speed of string similarity co
 * [Requirements](#r)
 * [Installation](#i)
 * [Usage](#u)
+* [Benchmarking FASTSICO Library on OpenCL Devices](#b)
 * [Troubleshooting](#t)
 * [Version History](#vh)
 * [Project Background and Acknowledgements](#ack)
@@ -41,7 +42,7 @@ Steps for installing the FASTSICO library as a Maven dependency in your project:
 <dependency>
     <groupId>com.hajhouj.fastsico</groupId>
     <artifactId>fastsico</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -63,7 +64,7 @@ public List<Result> calculateSimilarity(String query, String dataset, String alg
 
 * `query` is the query string.
 * `dataset` a large dataset of strings.
-* `algorithm` is the name of the algorithm to use for string similarity calculation. For version 1.0.0, only Edit distance algorithm is present in the library, and you can pass `IConstants.EDIT_DISTANCE` to use this algorithm.
+* `algorithm` is the name of the algorithm to use for string similarity calculation. For version 1.0.2, only Edit distance algorithm is present in the library, and you can pass `IConstants.EDIT_DISTANCE` to use this algorithm.
 
 The method returns a list of `Result` objects, each containing a target string and its similarity score to the query string. The list is ordered in ascending order by similarity score.
 
@@ -84,7 +85,7 @@ List<Result> results = calculateSimilarity(query, dataset, algorithm);
 FASTSICO can also be used as a command-line utility to find the most similar strings to a query string from a file containing a list of strings. The command has the following syntax:
 
 ```sh
-java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Xmx16g -cp "lib/*":fastsico-1.0.2.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 * `<data-file>` is the path to the file containing the list of target strings.
@@ -95,19 +96,19 @@ java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.fastsico.tools.Find <data-file> <q
 By default, the command will use the default OpenCL device available with the best configuration. However, if you need to specify a specific device, you can use the `use-device` system property, as shown in the example below:
 
 ```sh
-java -Duse-device=0.0 -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Duse-device=0.0 -Xmx16g -cp "lib/*":fastsico-1.0.2.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 Here, `0.0` means to use the first OpenCL device in platform 0.
 
 ## DevicesList Utility Command
 
-The DevicesList utility command is a helpful tool for listing the available OpenCL devices on the host machine, and for determining the query string to use when specifying a particular device using the `use-device` system property. The DevicesList utility command list the available OpenCL devices on the host machine, along with their associated query strings.&#x20;
+The DevicesList utility command is a helpful tool for listing the available OpenCL devices on the host machine, and for determining the query string to use when specifying a particular device using the `use-device` system property. The DevicesList utility command list the available OpenCL devices on the host machine, along with their associated query strings.
 
 To use the DevicesList utility command, run the following command:
 
 ```sh
-java -cp lib/*:fastsico-1.0.0.jar com.hajhouj.oss.fastsico.tools.DevicesList
+java -cp lib/*:fastsico-1.0.2.jar com.hajhouj.oss.fastsico.tools.DevicesList
 ```
 
 This will list the available OpenCL devices on the host machine, along with their associated query strings, in the following format:
@@ -122,6 +123,19 @@ DEVICE QUERY | DEVICE NAME
 
 ```
 
+# <a id="b"></a>Benchmarking FASTSICO Library on OpenCL Devices
+
+To benchmark the FASTSICO Library on your OpenCL devices, follow these steps:
+
+1. Download the latest release of [FASTSICO](https://github.com/hajhouj/fastsico/releases/latest).
+2. Unzip the downloaded release archive.
+3. Before running the benchmark script, you need to download the lyrics data from the following [link](https://www.kaggle.com/datasets/neisse/scrapped-lyrics-from-6-genres?resource=download&select=lyrics-data.csv). The lyrics data contains 15 million lines corresponding to lyrics from a vast number of songs across various genres.
+4. After downloading the lyrics data "lyrics-data.csv", place it in the same location as the benchmark script.
+5. Run the benchmark script based on your operating system:
+       * For Linux, execute the benchmark.sh script.
+       * For Windows, execute the benchmark.cmd script.
+6. When prompted, select the device you want to benchmark by entering its corresponding query device.
+7. The script will search for the query words "love of story" within the downloaded lyrics data and provide the top 10 most similar strings along with their similarity scores.
 
 # <a id="t"></a>Troubleshooting
 
@@ -138,6 +152,13 @@ DEVICE QUERY | DEVICE NAME
 # <a id="vh"></a>Version History
 
 A list of changes made to the library in each version.
+
+## 1.0.2
+* Correct bug in input buffer initialization.
+
+## 1.0.1
+* Correct bug in device selection
+* Add output formatting (xml, csv, json)
 
 ## 1.0.0
 * First version
