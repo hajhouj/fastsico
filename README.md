@@ -9,6 +9,7 @@ The primary objective of FASTSICO is enhancing the speed of string similarity co
 * [Requirements](#r)
 * [Installation](#i)
 * [Usage](#u)
+* [Benchmarking FASTSICO Library on OpenCL Devices](#b)
 * [Troubleshooting](#t)
 * [Version History](#vh)
 * [Project Background and Acknowledgements](#ack)
@@ -122,6 +123,19 @@ DEVICE QUERY | DEVICE NAME
 
 ```
 
+# <a id="b"></a>Benchmarking FASTSICO Library on OpenCL Devices
+
+To benchmark the FASTSICO Library on your OpenCL devices, follow these steps:
+
+1. Download the latest release of [FASTSICO](https://github.com/hajhouj/fastsico/releases/latest).
+2. Before running the benchmark script, you need to download the lyrics data from the following [link](https://www.kaggle.com/datasets/neisse/scrapped-lyrics-from-6-genres?resource=download&select=lyrics-data.csv). The lyrics data contains 15 million lines corresponding to lyrics from a vast number of songs across various genres.
+3. After downloading the lyrics data, place it in the same location as the benchmark script.
+4. Unzip the downloaded release archive.
+5. Run the benchmark script based on your operating system:
+       * For Linux, execute the benchmark.sh script.
+       * For Windows, execute the benchmark.cmd script.
+6. When prompted, select the device you want to benchmark by entering its corresponding query device.
+7. The script will search for the query words "love of story" within the downloaded lyrics data and provide the top 10 most similar strings along with their similarity scores.
 
 # <a id="t"></a>Troubleshooting
 
