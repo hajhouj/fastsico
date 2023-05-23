@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hajhouj.fastsico</groupId>
 	<artifactId>fastsico</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>FASTSICO</name>
 	<description>Fast String Similarity Computing Library</description>
   	<url>https://github.com/hajhouj/fastsico</url>

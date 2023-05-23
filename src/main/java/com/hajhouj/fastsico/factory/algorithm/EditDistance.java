@@ -106,7 +106,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		
 		//Maximum Java heap size
 		//Get the current memory usage of the heap
-		long XMX = Runtime.getRuntime().maxMemory();
+		long XMX = (Runtime.getRuntime().maxMemory() * 9) / 100;
 		//System.out.println("Maximum heap space: " + humanReadableByteCount(XMX));
 		
 		int INT_SIZE = 4; // 4 bytes
@@ -124,11 +124,18 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		
 		//compute memory size that will take after converting to vectors
 		long inputMemorySize= countLines.longValue() * VECTOR_SIZE * INT_SIZE;
+		
 		readerCount.close();
 		
 		//query
 		IntBuffer query = IntBuffer.allocate(VECTOR_SIZE);
 		query.put(convertToVector(queryInput, VECTOR_SIZE));
+		
+		System.err.println("Memory Limits :");
+		System.err.println("XMX = " + XMX);
+		System.err.println("MMA = " + MMA);
+		System.err.println("MB = " + MB);
+		
 		
 		List<Long> memoryLimits = Arrays.asList(XMX, MMA, MB);
 		
@@ -139,7 +146,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		//if memory size of input don't excess MMA and XMX, run kernel by passing the available input 
 		if (inputMemorySize <= Collections.min(memoryLimits)) {
 			//read input, convert each a line to a vector of a length of VECTOR_SIZE
-			int bufferCapacity = (int) (countLines.longValue() * VECTOR_SIZE);
+			int bufferCapacity = countLines.intValue() * VECTOR_SIZE;
 			IntBuffer in = IntBuffer.allocate(bufferCapacity);
 			
 			//fill in buffer
@@ -151,8 +158,8 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			result.put(runKernel(selectedDevice, in, query, countLines.longValue(), VECTOR_SIZE));
 		} else {
 			//if memory size of input excess MMA or XMX, split input data to chunks
-			int BUFFER_MEMORY_SIZE = (int)Collections.min(memoryLimits).longValue();
-			int BUFFER_CAPACITY = BUFFER_MEMORY_SIZE / INT_SIZE;
+			Long BUFFER_MEMORY_SIZE = Collections.min(memoryLimits).longValue();
+			int BUFFER_CAPACITY = new Long(BUFFER_MEMORY_SIZE / INT_SIZE).intValue();
 			IntBuffer chunk = IntBuffer.allocate(BUFFER_CAPACITY);
 			AtomicInteger count = new AtomicInteger();
 			
