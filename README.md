@@ -42,7 +42,7 @@ Steps for installing the FASTSICO library as a Maven dependency in your project:
 <dependency>
     <groupId>com.hajhouj.fastsico</groupId>
     <artifactId>fastsico</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ public List<Result> calculateSimilarity(String query, String dataset, String alg
 
 * `query` is the query string.
 * `dataset` a large dataset of strings.
-* `algorithm` is the name of the algorithm to use for string similarity calculation. For version 1.0.0, only Edit distance algorithm is present in the library, and you can pass `IConstants.EDIT_DISTANCE` to use this algorithm.
+* `algorithm` is the name of the algorithm to use for string similarity calculation. For version 1.0.2, only Edit distance algorithm is present in the library, and you can pass `IConstants.EDIT_DISTANCE` to use this algorithm.
 
 The method returns a list of `Result` objects, each containing a target string and its similarity score to the query string. The list is ordered in ascending order by similarity score.
 
@@ -85,7 +85,7 @@ List<Result> results = calculateSimilarity(query, dataset, algorithm);
 FASTSICO can also be used as a command-line utility to find the most similar strings to a query string from a file containing a list of strings. The command has the following syntax:
 
 ```sh
-java -cp "lib/*":fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Xmx16g -cp "lib/*":fastsico-1.0.2.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 * `<data-file>` is the path to the file containing the list of target strings.
@@ -96,19 +96,19 @@ java -cp "lib/*":fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> 
 By default, the command will use the default OpenCL device available with the best configuration. However, if you need to specify a specific device, you can use the `use-device` system property, as shown in the example below:
 
 ```sh
-java -Duse-device=0.0 -cp "lib/*":fastsico-1.0.1.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
+java -Duse-device=0.0 -Xmx16g -cp "lib/*":fastsico-1.0.2.jar com.hajhouj.fastsico.tools.Find <data-file> <query> <top-n> <output-format>
 ```
 
 Here, `0.0` means to use the first OpenCL device in platform 0.
 
 ## DevicesList Utility Command
 
-The DevicesList utility command is a helpful tool for listing the available OpenCL devices on the host machine, and for determining the query string to use when specifying a particular device using the `use-device` system property. The DevicesList utility command list the available OpenCL devices on the host machine, along with their associated query strings.&#x20;
+The DevicesList utility command is a helpful tool for listing the available OpenCL devices on the host machine, and for determining the query string to use when specifying a particular device using the `use-device` system property. The DevicesList utility command list the available OpenCL devices on the host machine, along with their associated query strings.
 
 To use the DevicesList utility command, run the following command:
 
 ```sh
-java -cp lib/*:fastsico-1.0.1.jar com.hajhouj.oss.fastsico.tools.DevicesList
+java -cp lib/*:fastsico-1.0.2.jar com.hajhouj.oss.fastsico.tools.DevicesList
 ```
 
 This will list the available OpenCL devices on the host machine, along with their associated query strings, in the following format:
@@ -152,6 +152,9 @@ To benchmark the FASTSICO Library on your OpenCL devices, follow these steps:
 # <a id="vh"></a>Version History
 
 A list of changes made to the library in each version.
+
+## 1.0.2
+* Correct bug in input buffer initialization.
 
 ## 1.0.1
 * Correct bug in device selection
