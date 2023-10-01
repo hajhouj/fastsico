@@ -9,4 +9,6 @@ public interface IConstants {
 	public final static String ED_ITEM_SIZE = "fastsico.ed.item.size";
 	//System property key that defines the device to use in computation
 	public final static String OPENCL_DEVICE = "use-device";
+
+	public static final String PROFILE_KERNEL = "profile";
 }

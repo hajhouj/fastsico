@@ -19,6 +19,7 @@ import org.jocl.Sizeof;
 import org.jocl.cl_command_queue;
 import org.jocl.cl_context;
 import org.jocl.cl_device_id;
+import org.jocl.cl_event;
 import org.jocl.cl_kernel;
 import org.jocl.cl_mem;
 import org.jocl.cl_program;
@@ -114,6 +115,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		long MB = (long)Integer.MAX_VALUE  * 4;
 		
 		final int ITEM_SIZE = Integer.parseInt(System.getProperty(IConstants.ED_ITEM_SIZE, "80"));
+		final boolean PROFILE_KERNEL = Boolean.parseBoolean(System.getProperty(IConstants.PROFILE_KERNEL, "false"));
 		//vector size of each item in the input data
 		int VECTOR_SIZE = ITEM_SIZE + 1; //first item contains the length, the rest contains data
 		
@@ -155,7 +157,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			});
 			
 			//run the kernel
-			result.put(runKernel(selectedDevice, in, query, countLines.longValue(), VECTOR_SIZE));
+			result.put(runKernel(selectedDevice, in, query, countLines.longValue(), VECTOR_SIZE, PROFILE_KERNEL));
 		} else {
 			//if memory size of input excess MMA or XMX, split input data to chunks
 			Long BUFFER_MEMORY_SIZE = Collections.min(memoryLimits).longValue();
@@ -166,7 +168,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 			reader.lines().forEach(line -> {
 				if (chunk.position() + VECTOR_SIZE > BUFFER_CAPACITY) {
 					try {
-						result.put(runKernel(selectedDevice,chunk, query, count.intValue(), VECTOR_SIZE));
+						result.put(runKernel(selectedDevice,chunk, query, count.intValue(), VECTOR_SIZE, PROFILE_KERNEL));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -182,7 +184,7 @@ public class EditDistance implements StringSimilarityAlgorithm {
 				}
 				count.incrementAndGet();
             });
-			result.put(runKernel(selectedDevice, chunk, query, count.longValue(), VECTOR_SIZE));			
+			result.put(runKernel(selectedDevice, chunk, query, count.longValue(), VECTOR_SIZE, PROFILE_KERNEL));			
 		}
 		
 		reader.close();
@@ -215,8 +217,12 @@ public class EditDistance implements StringSimilarityAlgorithm {
 		return result;
 	}
 
-	public static IntBuffer runKernel(cl_device_id selectedDevice, Buffer input, Buffer query, long n, int VECTOR_SIZE) throws OpenCLDeviceNotFoundException, IOException {
-        // Initialize the OpenCL context and command queue
+	public static IntBuffer runKernel(cl_device_id selectedDevice, Buffer input, Buffer query, long n, int VECTOR_SIZE, boolean profile) throws OpenCLDeviceNotFoundException, IOException {
+        if (profile) {
+        	return runKernelWithProfiling(selectedDevice, input, query, n, VECTOR_SIZE);
+        }
+		
+		// Initialize the OpenCL context and command queue
         CL.setExceptionsEnabled(true);
 
 		cl_context context = CL.clCreateContext(null, 1, new cl_device_id[] {selectedDevice }, null, null, null);
@@ -272,6 +278,94 @@ public class EditDistance implements StringSimilarityAlgorithm {
         for (int i = 0; i < n; i++) {
             System.out.printf("%d^2 = %.0f\n", i, output.get(i));
         }*/
+
+        // Release the resources
+        CL.clReleaseMemObject(inputBuffer);
+        CL.clReleaseMemObject(outputBuffer);
+        CL.clReleaseKernel(kernel);
+        CL.clReleaseProgram(program);
+        CL.clReleaseCommandQueue(queue);
+        CL.clReleaseContext(context);
+        
+        return output;
+    }
+	
+	public static IntBuffer runKernelWithProfiling(cl_device_id selectedDevice, Buffer input, Buffer query, long n, int VECTOR_SIZE) throws OpenCLDeviceNotFoundException, IOException {
+        // Initialize the OpenCL context and command queue
+        CL.setExceptionsEnabled(true);
+
+		cl_context context = CL.clCreateContext(null, 1, new cl_device_id[] {selectedDevice }, null, null, null);
+        cl_command_queue queue = CL.clCreateCommandQueue(context, selectedDevice, CL.CL_QUEUE_PROFILING_ENABLE, null);
+
+        // Create the input and output buffers
+        cl_mem inputBuffer = CL.clCreateBuffer(context, CL.CL_MEM_READ_ONLY, n * VECTOR_SIZE * Sizeof.cl_int, null, null);
+        cl_mem queryBuffer = CL.clCreateBuffer(context, CL.CL_MEM_READ_ONLY, VECTOR_SIZE * Sizeof.cl_int, null, null);
+        cl_mem outputBuffer = CL.clCreateBuffer(context, CL.CL_MEM_WRITE_ONLY, n * Sizeof.cl_int, null, null);
+
+        cl_event writeEvent1 = new cl_event();
+        cl_event writeEvent2 = new cl_event();
+        cl_event readEvent = new cl_event();
+        
+        // Copy the input data to the input buffer
+        CL.clEnqueueWriteBuffer(queue, inputBuffer, true, 0, n * VECTOR_SIZE * Sizeof.cl_int, Pointer.to(input), 0, null, writeEvent1);
+        // Copy the query data to the query buffer
+        CL.clEnqueueWriteBuffer(queue, queryBuffer, true, 0, VECTOR_SIZE * Sizeof.cl_int, Pointer.to(query), 0, null, writeEvent2);
+        
+
+		// Read the OpenCL code for Edit Distance Algorithm from ed.cl file
+		InputStream inputStream = EditDistance.class.getClassLoader().getResourceAsStream("ed.cl");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line).append("\n");
+		}
+		String editDistanceCode = sb.toString();
+
+		// Replace the value of ITEM_SIZE in the OpenCL code with the value from system
+		// properties or 80 as default
+		String kernelSource = editDistanceCode.replace("#define ITEM_SIZE 80", "#define ITEM_SIZE " + (VECTOR_SIZE - 1));
+
+        // Compile the kernel source code
+        cl_program program = CL.clCreateProgramWithSource(context, 1, new String[] { kernelSource }, null, null);
+        CL.clBuildProgram(program, 0, null, null, null, null);
+
+        // Create the kernel object
+        cl_kernel kernel = CL.clCreateKernel(program, "compute", null);
+
+        // Set the kernel arguments
+        CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(inputBuffer));
+        CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(queryBuffer));        
+        CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(outputBuffer));
+
+        // Execute the kernel
+        long globalWorkSize[] = new long[] { n };
+        CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, globalWorkSize, null, 0, null, null);
+
+        // Read the output data from the output buffer
+        IntBuffer output = IntBuffer.allocate((int)n);
+        CL.clEnqueueReadBuffer(queue, outputBuffer, true, 0, n * Sizeof.cl_int, Pointer.to(output), 0, null, readEvent);
+
+     // Extract timing information
+        long[] start = new long[1];
+        long[] end = new long[1];
+
+        CL.clGetEventProfilingInfo(writeEvent1, CL.CL_PROFILING_COMMAND_START, Sizeof.cl_ulong, Pointer.to(start), null);
+        CL.clGetEventProfilingInfo(writeEvent1, CL.CL_PROFILING_COMMAND_END, Sizeof.cl_ulong, Pointer.to(end), null);
+        System.out.println("Transfer time for inputBuffer: " + (end[0] - start[0]) / 1_000_000.0 + " ms");
+
+        CL.clGetEventProfilingInfo(writeEvent2, CL.CL_PROFILING_COMMAND_START, Sizeof.cl_ulong, Pointer.to(start), null);
+        CL.clGetEventProfilingInfo(writeEvent2, CL.CL_PROFILING_COMMAND_END, Sizeof.cl_ulong, Pointer.to(end), null);
+        System.out.println("Transfer time for queryBuffer: " + (end[0] - start[0]) / 1_000_000.0 + " ms");
+
+        CL.clGetEventProfilingInfo(readEvent, CL.CL_PROFILING_COMMAND_START, Sizeof.cl_ulong, Pointer.to(start), null);
+        CL.clGetEventProfilingInfo(readEvent, CL.CL_PROFILING_COMMAND_END, Sizeof.cl_ulong, Pointer.to(end), null);
+        System.out.println("Transfer time for outputBuffer: " + (end[0] - start[0]) / 1_000_000.0 + " ms");
+
+        // Clean up the events
+        CL.clReleaseEvent(writeEvent1);
+        CL.clReleaseEvent(writeEvent2);
+        CL.clReleaseEvent(readEvent);
 
         // Release the resources
         CL.clReleaseMemObject(inputBuffer);
